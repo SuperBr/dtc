@@ -1,0 +1,10 @@
+spring:
+  freemarker:
+    suffix: .ftl
+    cache: false
+    prefix: view/
+  mvc:
+    view:
+      prefix:
+server:
+  port: 8081
