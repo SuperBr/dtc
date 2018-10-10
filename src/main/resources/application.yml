@@ -3,8 +3,11 @@ spring:
     suffix: .ftl
     cache: false
     prefix: view/
-  mvc:
-    view:
-      prefix:
+    settings:maps: {template_update_delay: 0}
+
+
 server:
   port: 8081
+
+
+

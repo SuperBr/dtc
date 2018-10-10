@@ -1,17 +1,20 @@
 package com.dtc.zkService;
 
+import com.dtc.bean.ZkDateBean;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class defaultZkServiceImpl implements ZKService {
+public class DefaultZkServiceImpl implements ZKService {
     private static ConcurrentHashMap<String, CuratorFramework> cachedZk = new ConcurrentHashMap<>();
 
     @Override
@@ -39,27 +42,32 @@ public class defaultZkServiceImpl implements ZKService {
     }
 
     @Override
-    public Map<String, String> getPathDate(CuratorFramework curatorFramework, String path) throws Exception {
-        Map<String, String> dateMap = Maps.newHashMap();
-        this.recursiveGetDate(curatorFramework, dateMap, path);
-        return dateMap;
+    public ZkDateBean getPathDate(CuratorFramework curatorFramework, String path) throws Exception {
+        ZkDateBean zkDateBean = new ZkDateBean();
+        this.recursiveGetDate(curatorFramework, zkDateBean, path);
+        return zkDateBean;
     }
 
-    private void recursiveGetDate(CuratorFramework curatorFramework, Map<String, String> dateMap, String path) throws Exception {
+    private void recursiveGetDate(CuratorFramework curatorFramework, ZkDateBean zkDateBean, String path) throws Exception {
         if (curatorFramework.checkExists().forPath(path) != null) {
-            if (curatorFramework.getData().forPath(path) == null) {
-                dateMap.put(path, "");
-            }else {
-                dateMap.put(path, curatorFramework.getData().forPath(path).toString());
+            if (curatorFramework.getData().forPath(path) == null || curatorFramework.getData().forPath(path).length == 0) {
+                zkDateBean.setPath(path).setDate("");
+            } else {
+                zkDateBean.setPath(path).setDate(curatorFramework.getData().forPath(path).toString());
             }
 
             List<String> child = curatorFramework.getChildren().forPath(path);
             for (String s : child) {
-                if (path.endsWith("/")) {
-                    this.recursiveGetDate(curatorFramework, dateMap, path+s);
-                }else {
-                    this.recursiveGetDate(curatorFramework, dateMap, path+"/"+s);
+                if (zkDateBean.getChildNode() == null) {
+                    zkDateBean.setChildNode(new ArrayList<ZkDateBean>());
                 }
+                ZkDateBean curDateBean = new ZkDateBean();
+                if (path.endsWith("/")) {
+                    this.recursiveGetDate(curatorFramework, curDateBean, path + s);
+                } else {
+                    this.recursiveGetDate(curatorFramework, curDateBean, path + "/" + s);
+                }
+                zkDateBean.getChildNode().add(curDateBean);
 
             }
         }

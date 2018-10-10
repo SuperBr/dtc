@@ -1,24 +1,32 @@
 package com.dtc.action;
 
 
+import com.dtc.bean.ZkDateBean;
 import com.dtc.zkService.ZKService;
-import com.dtc.zkService.defaultZkServiceImpl;
+import com.dtc.zkService.DefaultZkServiceImpl;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Map;
 
 @Controller
 public class ZkServiceAction {
 
-    private ZKService zkService = new defaultZkServiceImpl();
+    private ZKService zkService = new DefaultZkServiceImpl();
 
     @ResponseBody
-    @RequestMapping("/zkDate")
-    public Map<String, String> getZkDate(String path) throws Exception {
+    @RequestMapping(value = "/zkDate")
+    public ZkDateBean getZkDate(String path) throws Exception {
 
 
         return zkService.getPathDate(zkService.getCacheZk("127.0.0.1:2181"), path);
     }
+
+
+    @RequestMapping("/zkDate/zkList")
+    public void getZkDateForDubbo(Model model) throws Exception {
+        ZkDateBean zkDateBean = zkService.getPathDate(zkService.getCacheZk("127.0.0.1:2181"), "/dubbo");
+        model.addAttribute("zkDates", zkDateBean);
+    }
+
 }

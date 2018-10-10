@@ -1,5 +1,6 @@
 package com.dtc.zkService;
 
+import com.dtc.bean.ZkDateBean;
 import org.apache.curator.framework.CuratorFramework;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ public interface ZKService {
 
     CuratorFramework getCacheZk(String connectionInfo);
 
-    Map<String, String> getPathDate(CuratorFramework curatorFramework, String path) throws Exception;
+    ZkDateBean getPathDate(CuratorFramework curatorFramework, String path) throws Exception;
 
 
 }
