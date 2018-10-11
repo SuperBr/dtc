@@ -25,7 +25,7 @@ public class ZkServiceAction {
 
     @RequestMapping("/zkDate/zkList")
     public void getZkDateForDubbo(Model model) throws Exception {
-        ZkDateBean zkDateBean = zkService.getPathDate(zkService.getCacheZk("127.0.0.1:2181"), "/dubbo");
+        ZkDateBean zkDateBean = zkService.getPathDate(zkService.getCacheZk("10.1.10.215:2181,10.1.10.216:2181,10.1.10.217:2181"), "/dubbo");
         model.addAttribute("zkDates", zkDateBean);
     }
 
