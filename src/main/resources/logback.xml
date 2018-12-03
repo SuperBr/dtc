@@ -13,6 +13,8 @@
         </encoder>
     </appender>
 
+    <logger name="org.apache.zookeeper" level="info"/>
+
 
 
     <root level="info">

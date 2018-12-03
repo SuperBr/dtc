@@ -12,9 +12,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
+import java.beans.Introspector;
+
 public class DefaultUserContext implements UserContext {
 
     private final ApplicationContext applicationContext;
+
+    private final DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
 
     private final User user;
 
@@ -22,7 +26,7 @@ public class DefaultUserContext implements UserContext {
 
 
     public DefaultUserContext(User user) {
-        applicationContext = new GenericApplicationContext();
+        applicationContext = new GenericApplicationContext(defaultListableBeanFactory);
         this.user=user;
     }
 
@@ -49,7 +53,7 @@ public class DefaultUserContext implements UserContext {
         ReferenceBean referenceBean = new ReferenceBean();
         referenceBean.setApplicationContext(applicationContext);
         referenceBean.setApplication(defaultApplicationConfig);
-
+        defaultListableBeanFactory.registerSingleton(Introspector.decapitalize(aClass.getName()),referenceBean);
         return referenceBean;
     }
 
